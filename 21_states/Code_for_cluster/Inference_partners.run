@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --chdir /home/gerardos/analyse_sequence/Code_for_cluster
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 7
+#SBATCH --mem 8000
+#SBATCH --time 0-06 # 7 days and six hours
+#SBATCH --mail-user=andonis.gerardos@epfl.ch
+#SBATCH --mail-type=ALL
+
+cd /home/gerardos/analyse_sequence/Code_for_cluster
+module load gcc
+module load python
+echo `python Inference_partners.py `
+
+

@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --chdir /home/gerardos/analyse_sequence/Code_for_cluster/slurm
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 36
+#SBATCH --mem 16000
+#SBATCH --time 3-00 # 7 days and six hours
+#SBATCH --mail-user=andonis.gerardos@epfl.ch
+#SBATCH --mail-type=ALL
+
+cd /home/gerardos/analyse_sequence/Code_for_cluster
+module load gcc
+module load python
+python inference_partners_generated_data.py
+
+

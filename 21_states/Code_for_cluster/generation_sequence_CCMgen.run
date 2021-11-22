@@ -1,0 +1,62 @@
+#!/bin/bash
+#SBATCH --chdir /home/gerardos/analyse_sequence/Code_for_cluster/slurm
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 36
+#SBATCH --mem 8000
+#SBATCH --time 3-00 # 7 days and six hours
+#SBATCH --mail-user=andonis.gerardos@epfl.ch
+#SBATCH --mail-type=ALL
+
+
+tree_file=${tree_file:-~/analyse_sequence/Code_for_cluster/fasta_file/Concat_nnn_withFirst.fasta.tree }
+tree_file_modify=${tree_file_modify:-~/analyse_sequence/Code_for_cluster/fasta_file/Concat_nnn_withFirst_modify.fasta.tree }
+field_inferred=${field_inferred:-~/analyse_sequence/Code_for_cluster/field_ccmpred/1atzA.braw.gz }
+fasta_file=${fasta_file:-~/analyse_sequence/Code_for_cluster/fasta_file/Concat_nnn_withFirst.fasta}
+seq0_file=${seq0_file:-~/analyse_sequence/Code_for_cluster/fasta_file/seq0_file.fasta}
+module load gcc python
+
+cd 
+source venvs/ccmgen/bin/activate
+
+cd ~/analyse_sequence/Code_for_cluster/fasta_file
+python modify_tree.py $tree_file $tree_file_modify $fasta_file
+
+python random_fasta.py $fasta_file $seq0_file
+
+cd ~/analyse_sequence/Code_for_cluster
+
+#ccmgen $field_inferred data_ccmpred/msa.mcmc_no_phylo.fas \
+#    --mcmc-sampling \
+#    --mcmc-sample-random-gapped --mcmc-burn-in 1000 --num-sequences 23633\
+#    --num-threads 36\
+#    --alnfile $fasta_file \ 
+
+ccmgen $field_inferred data_ccmpred/msa.mcmc_phylo_fast_tree_random_mutation_rate_1.fas \
+    --tree-newick $tree_file_modify \
+    --seq0-file $seq0_file \
+    --num-threads 36\
+    --mutation-rate 1\
+    --alnfile $fasta_file \
+
+ccmgen $field_inferred data_ccmpred/msa.mcmc_phylo_fast_tree_equi_mutation_rate_1.fas \
+    --tree-newick $tree_file_modify  \
+    --seq0-mrf 1000\
+    --num-threads 36\
+    --mutation-rate 1\
+    --alnfile $fasta_file \
+
+ccmgen $field_inferred data_ccmpred/msa.mcmc_phylo_fast_tree_random_mutation_rate_auto.fas \
+    --tree-newick $tree_file_modify \
+    --seq0-file $seq0_file \
+    --num-threads 36\
+    --mutation-rate-neff\
+    --alnfile $fasta_file \
+
+ccmgen $field_inferred data_ccmpred/msa.mcmc_phylo_fast_tree_equi_mutation_rate_auto.fas \
+    --tree-newick $tree_file_modify  \
+    --seq0-mrf 1000\
+    --num-threads 36\
+    --mutation-rate-neff\
+    --alnfile $fasta_file \
+

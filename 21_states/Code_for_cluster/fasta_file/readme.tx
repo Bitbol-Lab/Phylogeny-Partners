@@ -1,0 +1,7 @@
+fasttree Concat_nnn_withFirst.fasta > Concat_nnn_withFirst.fasta.tree
+
+## To observe the tree inferred 
+
+figtree Concat_nnn_withFirst.fasta.tree 
+
+

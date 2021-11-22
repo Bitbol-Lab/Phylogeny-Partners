@@ -1,0 +1,5 @@
+fasttree Concat_nnn_withFirst.fasta > Concat_nnn_withFirst.fasta.tree
+
+figtree Concat_nnn_withFirst.fasta.tree 
+
+## Here go to File -> Export Trees --> Nexus format

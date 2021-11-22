@@ -1,0 +1,9 @@
+bmDCA_preprocessing.sh :
+    ligne 65:
+        	END {if(seq_length>0){printf("%s\n",out)>>"Processed/temp1";}
+		printf("Number of sequences: %d\nSize of sequences: %d\n",Nseq,seq_length_tot);
+		printf("%d %d %d\n",Nseq,seq_length,21)>>"Processed/temp2"}
+        BECAME
+        	END {if(seq_length>0){printf("%s\n",out)>>"Processed/temp1";}
+		printf("Number of sequences: %d\nSize of sequences: %d\n",Nseq,seq_length_tot);
+		printf("%d %d %d\n",Nseq,seq_length,2)>>"Processed/temp2"}
