@@ -1,7 +1,5 @@
 # Phylogeny-Partners
 
-Report : [link overleaf](https://www.overleaf.com/read/hmzwzbgmhwbk)
-
 ## Two states models
 
 ### Instalation
@@ -20,15 +18,15 @@ The code works on linux and Mac. (It is possible to adapt it for windows, you ne
 
 ### Utilisation
 
-You can navigate to figures.ipynb and different_graph.ipynb to see all figures genereted with the simple model.
+You can open figures.ipynb and different_graph.ipynb to see all figures generated with the simple model.
 
 
 ## Twenty one states models
 
 ### Installation 
 
-The code present in Code_for_cluster was present in the EPFL cluster. It useful to genereate data and to infer contact and partners. The inference of the model has been previously done with bmDCA on the cluster, and with CCMgen and arDCA on my personal computer.
-If you want to reproduce the data, I advice you to copy the folder Code_for_cluster and to do :
+The code present in Code_for_cluster was present in the EPFL cluster. It is helpful to generate data and to infer contact and partners. The model has been inferred with bmDCA on the cluster and CCMgen and arDCA on my personal computer.
+If you want to reproduce the data, I advise you to copy the folder Code_for_cluster and to do :
 
 ```
 cd 21_states/Code_for_cluster/cython_code/
@@ -39,7 +37,7 @@ cythonize -i analyse_sequence.pyx
 
 ### Generation of data
 
-And after, you can generated MSA (data set of aligned sequences) :
+And after, you can generate MSA (data set of aligned sequences) :
 
 ```
 sbatch generation_sequence_CCMgen.run
@@ -47,7 +45,7 @@ sbatch generation_sequence_bmDCA.run
 sbatch generation_sequence_arDCA.run
 ```
 
-If you are not on a cluster and cannot use the function sbatch, I think that you can replace sbatch by bash. 
+If you are not on a cluster and cannot use the function sbatch, you can replace sbatch by bash. 
 
 ### Inference
 
@@ -61,11 +59,12 @@ And for the partners :
 sbatch inference_partners_generated_data.py
 ```
 
-Now, if you want to see the plot from the inference you can run the jupyter notebook inside the folder 21_states.
+If you want to see the plot from the inference, you can run the jupyter notebook inside the folder 21_states.
+
 
 
 ### Note for me :
-For pushing new file :
+For pushing new files :
 ```
 git add -A
 git commit -m "Name of commit"
