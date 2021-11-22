@@ -11,6 +11,6 @@ The jupyter notebook **inference_arDCA.ipynb** is used to infer field with **arD
 ## bmDCA
 
 You have the choice to use :
-    - a modified version of bmDCA in the folder bmdDCA_2_states (It is a modification of [bmdca of matteofigliuzzi](https://github.com/matteofigliuzzi/bmDCA))
-    - Or use [bmdca of ranganathanlab]https://github.com/ranganathanlab/bmDCA (I recommend this method)
+   - A modified version of bmDCA in the folder bmdDCA_2_states (It is a modification of [bmdca of matteofigliuzzi](https://github.com/matteofigliuzzi/bmDCA))
+   - Or use [bmdca of ranganathanlab]https://github.com/ranganathanlab/bmDCA (I recommend this method)
 
