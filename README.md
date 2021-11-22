@@ -69,15 +69,8 @@ If you want to see the plot from the inference, you can run the jupyter notebook
 
 ### Installation 
 
-If you want learn a new model, you should install bmDCA: 
-```
-https://github.com/ranganathanlab/bmDCA
-```
-And arDCA :
-```
-https://github.com/pagnani/ArDCA.jl
-```
+See **2_states_generation_inference/README.md**
 
-### figures
+### Figures
 See **generating_data_fasta.ipynb**
 
