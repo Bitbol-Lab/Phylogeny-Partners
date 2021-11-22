@@ -13,12 +13,17 @@
   cythonize -i generation_sequences.pyx
   cythonize -i mutual_info.pyx
   ```
+To use the last part of the jupyter notebook **figures.ipynb**, you should install bmDCA :
+```
+https://github.com/ranganathanlab/bmDCA
+```
+
 
 The code works on linux and Mac. (It is possible to adapt it for windows, you need to change the drand48() or random() function by one available in windows distribution)
 
 ### Utilisation
 
-You can open figures.ipynb and different_graph.ipynb to see all figures generated with the simple model.
+You can open **figures.ipynb** and **different_graph.ipynb** to see all figures generated with the simple model.
 
 
 ## Twenty one states models
@@ -60,4 +65,19 @@ sbatch inference_partners_generated_data.py
 
 If you want to see the plot from the inference, you can run the jupyter notebook inside the folder 21_states.
 
+## 2 states with sampling on a inferred model
+
+### Installation 
+
+If you want learn a new model, you should install bmDCA: 
+```
+https://github.com/ranganathanlab/bmDCA
+```
+And arDCA :
+```
+https://github.com/pagnani/ArDCA.jl
+```
+
+### figures
+See **generating_data_fasta.ipynb**
 
