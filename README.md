@@ -25,7 +25,7 @@ You can open figures.ipynb and different_graph.ipynb to see all figures generate
 
 ### Installation 
 
-The code present in Code_for_cluster was present in the EPFL cluster. It is helpful to generate data and to infer contact and partners. The model has been inferred with bmDCA on the cluster and CCMgen and arDCA on my personal computer.
+The code present in Code_for_cluster was present in the EPFL cluster. It is helpful to generate data and to infer contact and partners. The model has been inferred with bmDCA on the cluster and arDCA on my personal computer.
 If you want to reproduce the data, I advise you to copy the folder Code_for_cluster and to do :
 
 ```
@@ -40,7 +40,6 @@ cythonize -i analyse_sequence.pyx
 And after, you can generate MSA (data set of aligned sequences) :
 
 ```
-sbatch generation_sequence_CCMgen.run
 sbatch generation_sequence_bmDCA.run
 sbatch generation_sequence_arDCA.run
 ```
@@ -61,14 +60,4 @@ sbatch inference_partners_generated_data.py
 
 If you want to see the plot from the inference, you can run the jupyter notebook inside the folder 21_states.
 
-
-
-### Note for me :
-For pushing new files :
-```
-git add -A
-git commit -m "Name of commit"
-git push <remote> <name-of-branch>
-git push -u origin new-features
-```
 
