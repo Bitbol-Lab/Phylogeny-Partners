@@ -5,7 +5,9 @@ import generation_sequences as ge
 def Inference_Partner(
         l_msa, s_train, reg, n_pair, theta=0.0, fast=False,
         middle_index=None, n_mean=30, graph=None, Jij_para=None,
-        false_contact=False, msa_testing_input=None, **kwargs
+        false_contact=False, msa_testing_input=None, msa_train_input=None,
+        single_site_contact=False, single_false_contact=False,
+         **kwargs
         ):
     """
     Input :
@@ -28,26 +30,33 @@ def Inference_Partner(
     for index_mean in range(n_mean):
         for index_test in range(l_msa.shape[0]):
             Liste_permutation = np.random.permutation(l_msa.shape[1])
-            MSA_Training = l_msa[index_test,Liste_permutation[:s_train]]
-            if msa_testing_input:
+            if msa_testing_input is not None:
                 MSA_Testing = msa_testing_input
+                if Jij_para is None:
+                    assert msa_train_input is not None, "Need a msa train input"
+                    MSA_Training = np.array(msa_train_input, dtype=np.int8)             
             else:
-                MSA_Testing = l_msa[index_test,Liste_permutation[s_train:]]
+                MSA_Training = l_msa[index_test, Liste_permutation[:s_train]]
+                MSA_Testing = l_msa[index_test, Liste_permutation[s_train:]]
 
             if Jij_para is None:
-                Jij = Inference_Jij(MSA_Training,reg,theta)
+                Jij = Inference_Jij(MSA_Training, reg, theta)
             else:
-                Jij = Jij_para
+                Jij = np.copy(Jij_para)
 
             if graph is not None:
                 if false_contact:
                     Jij = false_contact_Jij(Jij, graph)
+                elif single_site_contact:
+                    Jij = single_contact_Jij(Jij, graph)
+                elif single_false_contact:
+                    Jij = single_false_contact_Jij(Jij, graph) 
                 else:
                     Jij = true_contact_Jij(Jij, graph)
 
             Eij = Energy_Partner(MSA_Testing, Jij, middle_index)
             ind_species = n_pair
-            while ind_species<MSA_Testing.shape[0]:
+            while ind_species < MSA_Testing.shape[0]:
                 Cost = Eij[ind_species-n_pair:ind_species,ind_species-n_pair:ind_species]
                 Permutation_worker_row = np.random.permutation(Cost.shape[0])
                 Cost = Cost[Permutation_worker_row]
@@ -113,18 +122,39 @@ def triangularise(m):
 
 def true_contact_Jij(Jij, graph):
     t_edge = graph.edges()
+    Jij_return = np.copy(Jij)
     for i in range(Jij.shape[0]-1):
         for j in range(i+1,Jij.shape[1]):
             if not ((i,j) in t_edge):
-                Jij[i,j]=0
-                Jij[j,i]=0
-    return Jij
+                Jij_return[i,j]=0
+                Jij_return[j,i]=0
+    return Jij_return
 
 def false_contact_Jij(Jij, graph):
     t_edge = graph.edges()
+    Jij_return = np.copy(Jij)
     for i in range(Jij.shape[0]-1):
-        for j in range(i+1,Jij.shape[1]):
+        for j in range(i+1, Jij.shape[1]):
             if (i,j) in t_edge:
-                Jij[i,j]=0
-                Jij[j,i]=0
-    return Jij
+                Jij_return[i,j]=0
+                Jij_return[j,i]=0
+    return Jij_return
+
+def single_contact_Jij(Jij, graph):
+    Jij_return = np.copy(Jij)
+    for i in range(Jij.shape[0]):
+        if len(graph[i]) > 0:
+            for j in range(Jij.shape[1]):
+                Jij_return[i,j]=0
+                Jij_return[j,i]=0
+    return Jij_return
+
+def single_false_contact_Jij(Jij, graph, n_selected_sites = 30):
+    selected_sites = np.random.permutation(Jij.shape[0])[:n_selected_sites]
+    Jij_return = np.copy(Jij)
+    for i in range(Jij.shape[0]):
+        for j in range(i+1, Jij.shape[1]):
+            if i not in selected_sites or (i,j) in graph.edges():
+                Jij_return[i,j] = 0
+                Jij_return[j,i] = 0
+    return Jij_return

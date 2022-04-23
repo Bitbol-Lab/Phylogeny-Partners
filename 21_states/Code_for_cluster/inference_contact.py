@@ -24,8 +24,8 @@ def Inference_contact_real_data(msa, regularisation, n_state_spin, theta, Graph)
     F = np.mean(Fij)
     Fij_apc = Fij - np.outer(Fi,Fi)/F
     Indice_top_coupling = np.unravel_index(np.argsort(-Fij_apc, axis=None), Fij.shape)
-    LTP = [];l_contact=[];L_inter = [];L_intra_hk = [];L_intra_rr = []
-    i=-2
+    LTP = [];l_contact = [];L_inter = [];L_intra_hk = [];L_intra_rr = []
+    i = -2
     while len(L_inter)<100 or len(L_intra_hk)<100 or len(L_intra_rr)<100  :
         i+= 2
         i1 = Indice_top_coupling[0][i]
@@ -40,7 +40,7 @@ def Inference_contact_real_data(msa, regularisation, n_state_spin, theta, Graph)
     L_inter = percent_list(L_inter)
     L_intra_hk = percent_list(L_intra_hk)
     L_intra_rr = percent_list(L_intra_rr)
-    return L_inter,L_intra_hk,L_intra_rr,Indice_top_coupling
+    return L_inter, L_intra_hk, L_intra_rr, Indice_top_coupling
 
 def percent_list(LTP):
     for pos in range(1,len(LTP)):
@@ -48,104 +48,75 @@ def percent_list(LTP):
     return LTP
 
 
-Graph_4 = nx.read_gexf("data/Graph_HK_and_RR_Threshold_4", node_type = int)
-Graph_8 = nx.read_gexf("data/Graph_HK_and_RR_Threshold_8", node_type = int)
-regularisation = 0.5
-theta = 0.0
-n_state_spin = 21
 
-file_fasta = "fasta_file/Concat_nnn_withFirst.fasta"
-msa = extr.get_msa_fasta_file(file_fasta)
+def infer_contact(name_graph, name_fasta, infer_bmdca=True, infer_ardca=True):
+    graph = nx.read_gexf("Extract_contact_pdb_HK-RR/%s"%name_graph, node_type = int)
+    regularisation = 0.5
+    theta = 0.0
+    n_state_spin = 21
+    file_fasta = "fasta_file/%s"%name_fasta
+    msa = extr.get_msa_fasta_file(file_fasta)
+    args = [regularisation, n_state_spin, theta, graph]
+    L_inter,L_intra_hk,L_intra_rr,_ = Inference_contact_real_data(msa, *args)
+    np.save("output_inference_contact/L_inter_%s"%name_graph, L_inter)
+    np.save("output_inference_contact/L_intra_hk_%s"%name_graph, L_intra_hk)
+    np.save("output_inference_contact/L_intra_rr_%s"%name_graph, L_intra_rr)
 
-# msa_no_phylo_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_no_phylo.fas")
-# msa_phylo_tree_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_phylo_fast_tree_random_mutation_rate_1.fas") 
-# msa_phylo_equi_tree_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_phylo_fast_tree_equi_mutation_rate_1.fas")
+    if infer_bmdca:
+        msa_no_phylo_bmdca = np.load("data_bmdca/msa_no_phylo_bmdca_%s.npy"%name_fasta)
+        msa_phylo_tree_bmdca = np.load("data_bmdca/msa_phylo_bmdca_tree_%s.npy"%name_fasta)
+        msa_phylo_equi_tree_bmdca = np.load("data_bmdca/msa_phylo_equi_bmdca_tree_%s.npy"%name_fasta)
 
-msa_no_phylo_bmdca = np.load("data_bmdca/msa_no_phylo_bmdca.npy")
-msa_phylo_tree_bmdca = np.load("data_bmdca/msa_phylo_bmdca_tree.npy")
-msa_phylo_equi_tree_bmdca = np.load("data_bmdca/msa_phylo_equi_bmdca_tree.npy")
+        L_inter_no_phylo_bmDCA,L_intra_hk_no_phylo_bmDCA,L_intra_rr_no_phylo_bmDCA,_ = Inference_contact_real_data(msa_no_phylo_bmdca, *args)
+        L_inter_phylo_bmDCA_tree,L_intra_hk_phylo_bmDCA_tree,L_intra_rr_phylo_bmDCA_tree,_ = Inference_contact_real_data(msa_phylo_tree_bmdca, *args)
+        L_inter_phylo_equi_bmDCA_tree,L_intra_hk_phylo_equi_bmDCA_tree,L_intra_rr_phylo_equi_bmDCA_tree,_ = Inference_contact_real_data(msa_phylo_equi_tree_bmdca, *args)
 
-msa_no_phylo_ardca = np.load("data_ardca/msa_no_phylo_ardca.npy")
-msa_phylo_tree_ardca = np.load("data_ardca/msa_phylo_ardca_tree.npy")
-msa_phylo_equi_tree_ardca = np.load("data_ardca/msa_phylo_equi_ardca_tree.npy") 
+        np.save("output_inference_contact/L_inter_no_phylo_bmDCA_%s"%name_graph,L_inter_no_phylo_bmDCA)
+        np.save("output_inference_contact/L_inter_phylo_bmDCA_tree_%s"%name_graph,L_inter_phylo_bmDCA_tree)
+        np.save("output_inference_contact/L_inter_phylo_equi_bmDCA_tree_%s"%name_graph,L_inter_phylo_equi_bmDCA_tree)
 
-args = [regularisation, n_state_spin, theta, Graph_4]
+        np.save("output_inference_contact/L_intra_hk_no_phylo_bmDCA_%s"%name_graph,L_intra_hk_no_phylo_bmDCA)
+        np.save("output_inference_contact/L_intra_hk_phylo_bmDCA_tree_%s"%name_graph,L_intra_hk_phylo_bmDCA_tree)
+        np.save("output_inference_contact/L_intra_hk_phylo_equi_bmDCA_tree_%s"%name_graph,L_intra_hk_phylo_equi_bmDCA_tree)
 
-# L_inter_no_phylo_CCMgen,L_intra_hk_no_phylo_CCMgen,L_intra_rr_no_phylo_CCMgen,_ = Inference_contact_real_data(msa_no_phylo_ccmpred, regularisation, n_state_spin, theta)
-# L_inter_phylo_tree_CCMgen,L_intra_hk_phylo_tree_CCMgen,L_intra_rr_phylo_tree_CCMgen,_ = Inference_contact_real_data(msa_phylo_tree_ccmpred, regularisation, n_state_spin, theta)
-# L_inter_phylo_equi_tree_CCMgen,L_intra_hk_phylo_equi_tree_CCMgen,L_intra_rr_phylo_equi_tree_CCMgen,_ = Inference_contact_real_data(msa_phylo_equi_tree_ccmpred, regularisation, n_state_spin, theta)
+        np.save("output_inference_contact/L_intra_rr_no_phylo_bmDCA_%s"%name_graph,L_intra_rr_no_phylo_bmDCA)
+        np.save("output_inference_contact/L_intra_rr_phylo_bmDCA_tree_%s"%name_graph,L_intra_rr_phylo_bmDCA_tree)
+        np.save("output_inference_contact/L_intra_rr_phylo_equi_bmDCA_tree_%s"%name_graph,L_intra_rr_phylo_equi_bmDCA_tree) 
 
-L_inter_no_phylo_bmDCA,L_intra_hk_no_phylo_bmDCA,L_intra_rr_no_phylo_bmDCA,_ = Inference_contact_real_data(msa_no_phylo_bmdca, *args)
-L_inter_phylo_bmDCA_tree,L_intra_hk_phylo_bmDCA_tree,L_intra_rr_phylo_bmDCA_tree,_ = Inference_contact_real_data(msa_phylo_tree_bmdca, *args)
-L_inter_phylo_equi_bmDCA_tree,L_intra_hk_phylo_equi_bmDCA_tree,L_intra_rr_phylo_equi_bmDCA_tree,_ = Inference_contact_real_data(msa_phylo_equi_tree_bmdca, *args)
+    if infer_ardca:
+        msa_no_phylo_ardca = np.load("data_ardca/msa_no_phylo_ardca_%s.npy"%name_fasta)
+        msa_phylo_tree_ardca = np.load("data_ardca/msa_phylo_ardca_tree_%s.npy"%name_fasta)
+        msa_phylo_equi_tree_ardca = np.load("data_ardca/msa_phylo_equi_ardca_tree_%s.npy"%name_fasta) 
 
-L_inter_no_phylo_arDCA,L_intra_hk_no_phylo_arDCA,L_intra_rr_no_phylo_arDCA,_ = Inference_contact_real_data(msa_no_phylo_ardca, *args)
-L_inter_phylo_arDCA_tree,L_intra_hk_phylo_arDCA_tree,L_intra_rr_phylo_arDCA_tree,_ = Inference_contact_real_data(msa_phylo_tree_ardca, *args)
-L_inter_phylo_equi_arDCA_tree,L_intra_hk_phylo_equi_arDCA_tree,L_intra_rr_phylo_equi_arDCA_tree,_ = Inference_contact_real_data(msa_phylo_equi_tree_ardca, *args)
+        L_inter_no_phylo_arDCA,L_intra_hk_no_phylo_arDCA,L_intra_rr_no_phylo_arDCA,_ = Inference_contact_real_data(msa_no_phylo_ardca, *args)
+        L_inter_phylo_arDCA_tree,L_intra_hk_phylo_arDCA_tree,L_intra_rr_phylo_arDCA_tree,_ = Inference_contact_real_data(msa_phylo_tree_ardca, *args)
+        L_inter_phylo_equi_arDCA_tree,L_intra_hk_phylo_equi_arDCA_tree,L_intra_rr_phylo_equi_arDCA_tree,_ = Inference_contact_real_data(msa_phylo_equi_tree_ardca, *args)
 
-L_inter,L_intra_hk,L_intra_rr,_ = Inference_contact_real_data(msa, *args)
+        np.save("output_inference_contact/L_inter_no_phylo_arDCA_%s"%name_graph,L_inter_no_phylo_arDCA)
+        np.save("output_inference_contact/L_inter_phylo_arDCA_tree_%s"%name_graph,L_inter_phylo_arDCA_tree)
+        np.save("output_inference_contact/L_inter_phylo_equi_arDCA_tree_%s"%name_graph,L_inter_phylo_equi_arDCA_tree)
 
-np.save("output_inference_contact/L_inter_4", L_inter)
-np.save("output_inference_contact/L_inter_no_phylo_bmDCA_4",L_inter_no_phylo_bmDCA)
-np.save("output_inference_contact/L_inter_phylo_bmDCA_tree_4",L_inter_phylo_bmDCA_tree)
-np.save("output_inference_contact/L_inter_phylo_equi_bmDCA_tree_4",L_inter_phylo_equi_bmDCA_tree)
-np.save("output_inference_contact/L_inter_no_phylo_arDCA_4",L_inter_no_phylo_arDCA)
-np.save("output_inference_contact/L_inter_phylo_arDCA_tree_4",L_inter_phylo_arDCA_tree)
-np.save("output_inference_contact/L_inter_phylo_equi_arDCA_tree_4",L_inter_phylo_equi_arDCA_tree)
+        np.save("output_inference_contact/L_intra_hk_no_phylo_arDCA_%s"%name_graph,L_intra_hk_no_phylo_arDCA)
+        np.save("output_inference_contact/L_intra_hk_phylo_arDCA_tree_%s"%name_graph,L_intra_hk_phylo_arDCA_tree)
+        np.save("output_inference_contact/L_intra_hk_phylo_equi_arDCA_tree_%s"%name_graph,L_intra_hk_phylo_equi_arDCA_tree)
 
-np.save("output_inference_contact/L_intra_hk_4", L_intra_hk)
-np.save("output_inference_contact/L_intra_hk_no_phylo_bmDCA_4",L_intra_hk_no_phylo_bmDCA)
-np.save("output_inference_contact/L_intra_hk_phylo_bmDCA_tree_4",L_intra_hk_phylo_bmDCA_tree)
-np.save("output_inference_contact/L_intra_hk_phylo_equi_bmDCA_tree_4",L_intra_hk_phylo_equi_bmDCA_tree)
-np.save("output_inference_contact/L_intra_hk_no_phylo_arDCA_4",L_intra_hk_no_phylo_arDCA)
-np.save("output_inference_contact/L_intra_hk_phylo_arDCA_tree_4",L_intra_hk_phylo_arDCA_tree)
-np.save("output_inference_contact/L_intra_hk_phylo_equi_arDCA_tree_4",L_intra_hk_phylo_equi_arDCA_tree)
-
-np.save("output_inference_contact/L_intra_rr_4", L_intra_rr)
-np.save("output_inference_contact/L_intra_rr_no_phylo_bmDCA_4",L_intra_rr_no_phylo_bmDCA)
-np.save("output_inference_contact/L_intra_rr_phylo_bmDCA_tree_4",L_intra_rr_phylo_bmDCA_tree)
-np.save("output_inference_contact/L_intra_rr_phylo_equi_bmDCA_tree_4",L_intra_rr_phylo_equi_bmDCA_tree)
-np.save("output_inference_contact/L_intra_rr_no_phylo_arDCA_4",L_intra_rr_no_phylo_arDCA)
-np.save("output_inference_contact/L_intra_rr_phylo_arDCA_tree_4",L_intra_rr_phylo_arDCA_tree)
-np.save("output_inference_contact/L_intra_rr_phylo_equi_arDCA_tree_4",L_intra_rr_phylo_equi_arDCA_tree)
+        np.save("output_inference_contact/L_intra_rr_no_phylo_arDCA_%s"%name_graph,L_intra_rr_no_phylo_arDCA)
+        np.save("output_inference_contact/L_intra_rr_phylo_arDCA_tree_%s"%name_graph,L_intra_rr_phylo_arDCA_tree)
+        np.save("output_inference_contact/L_intra_rr_phylo_equi_arDCA_tree_%s"%name_graph,L_intra_rr_phylo_equi_arDCA_tree)
 
 
-args = [regularisation, n_state_spin, theta, Graph_8]
+name_fasta = "MALG_MALK_cov75_hmmsearch_sorted_withLast_b.fas"
+name_graph = "prot_MalG_MalK_Threshold_8_MinAllDist"
+infer_contact(name_graph, name_fasta, infer_bmdca=False)
+name_graph = "prot_MalG_MalK_Threshold_4_MinAllDist"
+infer_contact(name_graph, name_fasta,infer_bmdca=False)
+name_graph = "prot_MalG_MalK_Threshold_8_CarbonAlpha"
+infer_contact(name_graph, name_fasta, infer_bmdca=False)
 
-# L_inter_no_phylo_CCMgen,L_intra_hk_no_phylo_CCMgen,L_intra_rr_no_phylo_CCMgen,_ = Inference_contact_real_data(msa_no_phylo_ccmpred, regularisation, n_state_spin, theta)
-# L_inter_phylo_tree_CCMgen,L_intra_hk_phylo_tree_CCMgen,L_intra_rr_phylo_tree_CCMgen,_ = Inference_contact_real_data(msa_phylo_tree_ccmpred, regularisation, n_state_spin, theta)
-# L_inter_phylo_equi_tree_CCMgen,L_intra_hk_phylo_equi_tree_CCMgen,L_intra_rr_phylo_equi_tree_CCMgen,_ = Inference_contact_real_data(msa_phylo_equi_tree_ccmpred, regularisation, n_state_spin, theta)
-
-L_inter_no_phylo_bmDCA,L_intra_hk_no_phylo_bmDCA,L_intra_rr_no_phylo_bmDCA,_ = Inference_contact_real_data(msa_no_phylo_bmdca, *args)
-L_inter_phylo_bmDCA_tree,L_intra_hk_phylo_bmDCA_tree,L_intra_rr_phylo_bmDCA_tree,_ = Inference_contact_real_data(msa_phylo_tree_bmdca, *args)
-L_inter_phylo_equi_bmDCA_tree,L_intra_hk_phylo_equi_bmDCA_tree,L_intra_rr_phylo_equi_bmDCA_tree,_ = Inference_contact_real_data(msa_phylo_equi_tree_bmdca, *args)
-
-L_inter_no_phylo_arDCA,L_intra_hk_no_phylo_arDCA,L_intra_rr_no_phylo_arDCA,_ = Inference_contact_real_data(msa_no_phylo_ardca, *args)
-L_inter_phylo_arDCA_tree,L_intra_hk_phylo_arDCA_tree,L_intra_rr_phylo_arDCA_tree,_ = Inference_contact_real_data(msa_phylo_tree_ardca, *args)
-L_inter_phylo_equi_arDCA_tree,L_intra_hk_phylo_equi_arDCA_tree,L_intra_rr_phylo_equi_arDCA_tree,_ = Inference_contact_real_data(msa_phylo_equi_tree_ardca, *args)
-
-L_inter,L_intra_hk,L_intra_rr,_ = Inference_contact_real_data(msa, *args)
-
-np.save("output_inference_contact/L_inter_8", L_inter)
-np.save("output_inference_contact/L_inter_no_phylo_bmDCA_8",L_inter_no_phylo_bmDCA)
-np.save("output_inference_contact/L_inter_phylo_bmDCA_tree_8",L_inter_phylo_bmDCA_tree)
-np.save("output_inference_contact/L_inter_phylo_equi_bmDCA_tree_8",L_inter_phylo_equi_bmDCA_tree)
-np.save("output_inference_contact/L_inter_no_phylo_arDCA_8",L_inter_no_phylo_arDCA)
-np.save("output_inference_contact/L_inter_phylo_arDCA_tree_8",L_inter_phylo_arDCA_tree)
-np.save("output_inference_contact/L_inter_phylo_equi_arDCA_tree_8",L_inter_phylo_equi_arDCA_tree)
-
-np.save("output_inference_contact/L_intra_hk_8", L_intra_hk)
-np.save("output_inference_contact/L_intra_hk_no_phylo_bmDCA_8",L_intra_hk_no_phylo_bmDCA)
-np.save("output_inference_contact/L_intra_hk_phylo_bmDCA_tree_8",L_intra_hk_phylo_bmDCA_tree)
-np.save("output_inference_contact/L_intra_hk_phylo_equi_bmDCA_tree_8",L_intra_hk_phylo_equi_bmDCA_tree)
-np.save("output_inference_contact/L_intra_hk_no_phylo_arDCA_8",L_intra_hk_no_phylo_arDCA)
-np.save("output_inference_contact/L_intra_hk_phylo_arDCA_tree_8",L_intra_hk_phylo_arDCA_tree)
-np.save("output_inference_contact/L_intra_hk_phylo_equi_arDCA_tree_8",L_intra_hk_phylo_equi_arDCA_tree)
-
-np.save("output_inference_contact/L_intra_rr_8", L_intra_rr)
-np.save("output_inference_contact/L_intra_rr_no_phylo_bmDCA_8",L_intra_rr_no_phylo_bmDCA)
-np.save("output_inference_contact/L_intra_rr_phylo_bmDCA_tree_8",L_intra_rr_phylo_bmDCA_tree)
-np.save("output_inference_contact/L_intra_rr_phylo_equi_bmDCA_tree_8",L_intra_rr_phylo_equi_bmDCA_tree)
-np.save("output_inference_contact/L_intra_rr_no_phylo_arDCA_8",L_intra_rr_no_phylo_arDCA)
-np.save("output_inference_contact/L_intra_rr_phylo_arDCA_tree_8",L_intra_rr_phylo_arDCA_tree)
-np.save("output_inference_contact/L_intra_rr_phylo_equi_arDCA_tree_8",L_intra_rr_phylo_equi_arDCA_tree)
+name_fasta = "Concat_nnn_withFirst.fasta"
+name_graph = "prot_HK_and_RR_Threshold_4_MinAllDist"
+infer_contact(name_graph, name_fasta)
+name_graph = "prot_HK_and_RR_Threshold_8_MinAllDist"
+infer_contact(name_graph, name_fasta)
+name_graph = "prot_HK_and_RR_Threshold_8_CarbonAlpha"
+infer_contact(name_graph, name_fasta)

@@ -1,7 +1,6 @@
 import numpy as np
 
-def import_msa_bmDCA(path_file):
-    L = 176
+def import_msa_bmDCA(path_file, L):
     J2 = np.zeros((L, L, 21, 21), dtype=np.float64)
     h = np.zeros((L, 21), dtype=np.float64)
     with open(path_file, "r") as f:

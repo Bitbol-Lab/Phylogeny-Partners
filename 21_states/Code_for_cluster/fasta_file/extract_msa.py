@@ -1,3 +1,4 @@
+from re import S
 from Bio import SeqIO
 import numpy as np
 
@@ -7,8 +8,16 @@ def dictionnary_species(file_fasta):
     """
     d_species = {}
     for ind,record in enumerate(SeqIO.parse(file_fasta, "fasta")):
-        name = record.id[record.id.find('|')+1:]
-        name = name[:name.find('|')]
+        if "Concat" in file_fasta:
+            name = record.id[record.id.find('|')+1:]
+            name = name[:name.find('|')]
+        elif "MALG" in file_fasta:
+            name = record.id[record.id.find('_')+1:]
+            name = name[name.find('_')+1:]
+            name = name[name.find('_')+1:]
+        else:
+            print("error name not defined")
+            raise("error")
         if name not in d_species.keys():
              d_species[name] = [ind]
         else:

@@ -1,16 +1,36 @@
 #!/bin/bash
-#SBATCH --chdir /home/gerardos/analyse_sequence/Code_for_cluster/slurm
+#SBATCH --chdir /home/gerardos/paper_AF/Code_for_cluster/slurm
 #SBATCH --nodes 1
-#SBATCH --ntasks 1
-#SBATCH --cpus-per-task 36
+#SBATCH --ntasks 3
+#SBATCH --cpus-per-task 12
 #SBATCH --mem 16000
-#SBATCH --time 3-00 # 7 days and six hours
-#SBATCH --mail-user=andonis.gerardos@epfl.ch
+#SBATCH --time 1-00 # 7 days and six hours
+#SBATCH --mail-user=andonis.gerardos@pm.me
 #SBATCH --mail-type=ALL
 
-cd /home/gerardos/analyse_sequence/Code_for_cluster
+cd /home/gerardos/paper_AF/Code_for_cluster
 module load gcc
 module load python
-python inference_partners_modif_score.py
 
+fasta_name=MALG_MALK_cov75_hmmsearch_sorted_withLast_b.fas
+srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_MalG_MalK_Threshold_4_MinAllDist --arDCA &
+srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_MalG_MalK_Threshold_8_MinAllDist --arDCA &
+srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_MalG_MalK_Threshold_8_CarbonAlpha --arDCA &
+wait
+
+# fasta_name=Concat_nnn_withFirst.fasta
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_4_MinAllDist --arDCA &
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_MinAllDist --arDCA &
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_CarbonAlpha --arDCA &
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_4_MinAllDist &
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_MinAllDist &
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_CarbonAlpha &
+
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_4_MinAllDist --arDCA --theta=0.2&
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_MinAllDist --arDCA --theta=0.2&
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_CarbonAlpha --arDCA --theta=0.2&
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_4_MinAllDist --theta=0.2&
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_MinAllDist --theta=0.2&
+# srun --ntasks=1 python inference_partners_modif_score.py $fasta_name prot_HK_and_RR_Threshold_8_CarbonAlpha --theta=0.2&
+# wait
 

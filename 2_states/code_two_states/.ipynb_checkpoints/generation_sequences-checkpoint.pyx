@@ -14,14 +14,14 @@ cdef class Sampling_msa_two_states:
     cdef int[:,:] m_neighboors
     cdef int[::1] l_stop
     cdef int n_nodes
-    cdef public float  T 
+    cdef public float T 
     cdef public int flip_equi
     
-    def __init__(self, graph, int flip_equi = 4000):
+    def __init__(self, graph, int flip_equi = 4000, float T = float(1.0)):
         """
         """
         self.n_nodes = np.intc(graph.number_of_nodes())
-        self.T = float(1.0)
+        self.T = float(T)
         self.flip_equi = flip_equi
         
         print("Standard Temperature is %s"%self.T)
@@ -56,7 +56,7 @@ cdef class Sampling_msa_two_states:
                     self.mcmc_wolf(msa[i])
         return np.asarray(msa)        
                     
-    def msa_binary_tree(self, int n_generatiFons, int n_mutations_branch, int start_from_equilibrium, int wolf_flip = 0):
+    def msa_binary_tree(self, int n_generations, int n_mutations_branch, int start_from_equilibrium, int wolf_flip=0):
         """
          int n_generations, int n_mutations_branch, int start_from_equilibrium, int wolf_flip = 0
         """
@@ -69,7 +69,7 @@ cdef class Sampling_msa_two_states:
             if wolf_flip == 0:
                 self.mcmc(self.flip_equi, seq)
             else:
-                #print("Use wolf algo with : %s flips"%wolf_flip)
+                print("Use wolf algo with : %s flips"%wolf_flip)
                 for i in range(wolf_flip):
                     self.mcmc_wolf(seq)
             
@@ -82,7 +82,7 @@ cdef class Sampling_msa_two_states:
         
         return np.asarray(msa)
             
-    def msa_binary_tree_pure_phylo(self, int n_generations, int n_mutations_branch, int start_from_equilibrium, int wolf_flip = 0):
+    def msa_binary_tree_pure_phylo(self, int n_generations, int n_mutations_branch, int start_from_equilibrium, int wolf_flip=0):
         """
          int n_generations, int n_mutations_branch, int start_from_equilibrium, int wolf_flip = 0
         """

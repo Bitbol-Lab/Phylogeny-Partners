@@ -74,10 +74,10 @@ def infer_bmDCA_fields(
     config = "codes_bmdca/bmdca.conf"
     alphabet = "-A" #First two letter of alphabet used in bmDCA
 
-    l_Jij, l_msa_test, l_path_coupling = [], [], []
+    l_Jij, l_msa_test, l_path_coupling, l_msa_train = [], [], [], []
     
-    for i,msa_input in enumerate(l_msa):
-        msa = np.array((msa_input + 1)/2,dtype=int) ## To be shure to have 0 and 1 in the msa and not -1 and 1   
+    for i, msa_input in enumerate(l_msa):
+        msa = np.array((msa_input + 1)/2, dtype=int) ## To be shure to have 0 and 1 in the msa and not -1 and 1   
         l_perm = np.random.permutation(msa.shape[0])
         if size_train is None:
             msa_train = msa
@@ -113,9 +113,10 @@ def infer_bmDCA_fields(
 
             l_Jij.append(Jij)
             l_msa_test.append(msa_test)
+            l_msa_train.append(msa_train)
         
     if return_path_coupling is False:
-        return l_Jij, l_msa_test
+        return l_Jij, l_msa_test, l_msa_train
     else:
         return l_path_coupling
 

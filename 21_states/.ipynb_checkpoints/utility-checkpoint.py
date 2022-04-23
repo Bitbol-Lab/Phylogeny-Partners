@@ -2,7 +2,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def set_size(width, fraction=1, subplots=(1, 1), scale_height = 1):
+def set_size(width, fraction = 1, subplots = (1, 1), scale_height = 1, width_inch = None):
     """Set figure dimensions to avoid scaling in LaTeX.
 
     Parameters
@@ -20,26 +20,33 @@ def set_size(width, fraction=1, subplots=(1, 1), scale_height = 1):
     fig_dim: tuple
             Dimensions of figure in inches
     """
-    if width == 'thesis':
-        width_pt = 426.79135
-    elif width == 'beamer':
-        width_pt = 307.28987
-    elif width == "article":
-        width_pt = 430.00462
+    if width_inch is None:
+        if width == 'thesis':
+            width_pt = 426.79135
+        elif width == 'beamer':
+            width_pt = 307.28987
+        elif width == "article":
+            width_pt = 430.00462
+        else:
+            width_pt = width
+        
+        # Width of figure (in pts)
+        fig_width_pt = width_pt * fraction
+        # Convert from pt to inches
+        inches_per_pt = 1 / 72.27
+        # Figure width in inches
+        fig_width_in = fig_width_pt * inches_per_pt
+    
     else:
-        width_pt = width
+        fig_width_in = width_inch
 
-    # Width of figure (in pts)
-    fig_width_pt = width_pt * fraction
-    # Convert from pt to inches
-    inches_per_pt = 1 / 72.27
+
 
     # Golden ratio to set aesthetic figure height
     # https://disq.us/p/2940ij3
     golden_ratio = (5**.5 - 1) / 2
 
-    # Figure width in inches
-    fig_width_in = fig_width_pt * inches_per_pt
+
     # Figure height in inches
     fig_height_in = fig_width_in * golden_ratio * (subplots[0] / subplots[1]) * scale_height
 

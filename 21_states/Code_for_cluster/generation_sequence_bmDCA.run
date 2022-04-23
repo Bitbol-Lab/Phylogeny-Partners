@@ -1,15 +1,15 @@
 #!/bin/bash
-#SBATCH --chdir /home/gerardos/analyse_sequence/Code_for_cluster/slurm
+#SBATCH --chdir /home/gerardos/paper_AF/Code_for_cluster/slurm
 #SBATCH --nodes 1
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 36
-#SBATCH --mem 8000
+#SBATCH --mem 16000
 #SBATCH --time 7-00 # 7 days and six hours
 #SBATCH --qos=week
-#SBATCH --mail-user=andonis.gerardos@epfl.ch
+#SBATCH --mail-user=andonis.gerardos@pm.me
 #SBATCH --mail-type=ALL
 
-cd /home/gerardos/analyse_sequence/Code_for_cluster
+cd /home/gerardos/paper_AF/Code_for_cluster
 module load gcc
 module load python
 python generation_sequence_bmDCA.py

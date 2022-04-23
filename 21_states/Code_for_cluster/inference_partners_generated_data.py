@@ -73,13 +73,13 @@ def inference_partner_generated(msa, size_train, number_of_pair_in_species,
         ### 
         ind_species = number_of_pair_in_species
         while ind_species<msa_testing.shape[0]:
-            msa_test=msa_testing[ind_species - number_of_pair_in_species:ind_species]
+            msa_test = msa_testing[ind_species - number_of_pair_in_species:ind_species]
             Cost = an.Energy_Partner(msa_test, Jij, middle_index)
             Permutation_worker_row = np.random.permutation(Cost.shape[0])
             Cost = Cost[Permutation_worker_row]
             row_ind, col_ind = linear_sum_assignment(Cost)
-            percent_true_partner += np.mean(Permutation_worker_row[row_ind] == col_ind) # The true index of worker i is Permutation_worker[i]
-            counter_average += 1
+            percent_true_partner += np.sum(Permutation_worker_row[row_ind] == col_ind) # The true index of worker i is Permutation_worker[i]
+            counter_average += 1*msa_test.shape[0]
             ind_species += number_of_pair_in_species  
     return percent_true_partner/counter_average
 
@@ -105,10 +105,6 @@ msa = extr.get_msa_fasta_file(file_fasta)
 d_species = extr.dictionnary_species(file_fasta)
 l_species = [l for l in list(d_species.values()) if len(l)>=2]
 
-msa_no_phylo_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_no_phylo.fas")
-msa_phylo_equi_tree_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_phylo_fast_tree_equi_mutation_rate_1.fas")
-msa_phylo_tree_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_phylo_fast_tree_random_mutation_rate_1.fas")
-
 msa_no_phylo_bmdca = np.load("data_bmdca/msa_no_phylo_bmdca.npy")
 msa_phylo_tree_bmdca = np.load("data_bmdca/msa_phylo_bmdca_tree.npy")
 msa_phylo_equi_tree_bmdca = np.load("data_bmdca/msa_phylo_equi_bmdca_tree.npy")
@@ -124,10 +120,6 @@ args_real_data = [l_species, l_size_train, regularisation, n_state_spin, middle_
 l_plot = l_plot_inference(msa, *args)
 l_plot_real_species = l_plot_inference_real_data(msa, *args_real_data)
 
-l_plot_no_phylo_ccmpred = l_plot_inference_real_data(msa_no_phylo_ccmpred, *args_real_data)
-l_plot_phylo_tree_ccmpred = l_plot_inference_real_data(msa_phylo_tree_ccmpred,*args_real_data)
-l_plot_phylo_equi_tree_ccmpred = l_plot_inference_real_data(msa_phylo_equi_tree_ccmpred,*args_real_data)
-
 l_plot_no_phylo_bmdca = l_plot_inference_real_data(msa_no_phylo_bmdca, *args_real_data)
 l_plot_phylo_tree_bmdca = l_plot_inference_real_data(msa_phylo_tree_bmdca, *args_real_data)
 l_plot_phylo_equi_tree_bmdca = l_plot_inference_real_data(msa_phylo_equi_tree_bmdca, *args_real_data)
@@ -136,26 +128,9 @@ l_plot_no_phylo_ardca = l_plot_inference_real_data(msa_no_phylo_ardca, *args_rea
 l_plot_phylo_tree_ardca = l_plot_inference_real_data(msa_phylo_tree_ardca, *args_real_data)
 l_plot_phylo_equi_tree_ardca = l_plot_inference_real_data(msa_phylo_equi_tree_ardca, *args_real_data)
 
-# l_plot_no_phylo_ccmpred = l_plot_inference(msa_no_phylo_ccmpred, *args)
-# l_plot_phylo_tree_ccmpred = l_plot_inference(msa_phylo_tree_ccmpred,*args)
-# l_plot_phylo_equi_tree_ccmpred = l_plot_inference(msa_phylo_equi_tree_ccmpred,*args)
-
-# l_plot_no_phylo_bmdca = l_plot_inference(msa_no_phylo_bmdca, *args)
-# l_plot_phylo_tree_bmdca = l_plot_inference(msa_phylo_tree_bmdca, *args)
-# l_plot_phylo_equi_tree_bmdca = l_plot_inference(msa_phylo_equi_tree_bmdca, *args)
-
-# l_plot_no_phylo_ardca = l_plot_inference(msa_no_phylo_ardca, *args)
-# l_plot_phylo_tree_ardca = l_plot_inference(msa_phylo_tree_ardca, *args)
-# l_plot_phylo_equi_tree_ardca = l_plot_inference(msa_phylo_equi_tree_ardca, *args)
-
-
 np.save("output_inference_partners_generated/l_size_train",l_size_train)
 np.save("output_inference_partners_generated/l_plot",l_plot)
 np.save("output_inference_partners_generated/l_plot_real_species",l_plot_real_species)
-
-np.save("output_inference_partners_generated/l_plot_no_phylo_ccmpred",l_plot_no_phylo_ccmpred)
-np.save("output_inference_partners_generated/l_plot_phylo_tree_ccmpred",l_plot_phylo_tree_ccmpred)
-np.save("output_inference_partners_generated/l_plot_phylo_equi_tree_ccmpred",l_plot_phylo_equi_tree_ccmpred)
 
 np.save("output_inference_partners_generated/l_plot_no_phylo_bmdca",l_plot_no_phylo_bmdca)
 np.save("output_inference_partners_generated/l_plot_phylo_tree_bmdca",l_plot_phylo_tree_bmdca)
@@ -164,13 +139,3 @@ np.save("output_inference_partners_generated/l_plot_phylo_equi_tree_bmdca",l_plo
 np.save("output_inference_partners_generated/l_plot_no_phylo_ardca",l_plot_no_phylo_ardca)
 np.save("output_inference_partners_generated/l_plot_phylo_tree_ardca",l_plot_phylo_tree_ardca)
 np.save("output_inference_partners_generated/l_plot_phylo_equi_tree_ardca",l_plot_phylo_equi_tree_ardca)
-
-#### test ######
-msa_phylo_equi_tree_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_phylo_fast_tree_equi_mutation_rate_auto.fas")
-msa_phylo_tree_ccmpred = extr.get_msa_fasta_file("data_ccmpred/msa.mcmc_phylo_fast_tree_random_mutation_rate_auto.fas")
-l_plot_phylo_tree_ccmpred = l_plot_inference_real_data(msa_phylo_tree_ccmpred,*args_real_data)
-l_plot_phylo_equi_tree_ccmpred = l_plot_inference_real_data(msa_phylo_equi_tree_ccmpred,*args_real_data)
-
-np.save("output_inference_partners_generated/l_plot_phylo_tree_auto_rate_ccmpred",l_plot_phylo_tree_ccmpred)
-np.save("output_inference_partners_generated/l_plot_phylo_equi_tree_auto_rate_ccmpred",l_plot_phylo_equi_tree_ccmpred)
-################ 

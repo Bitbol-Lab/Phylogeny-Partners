@@ -25,7 +25,7 @@ def write_new_tree_for_ccmgen(file_tree, file_new_tree, file_fasta):
     tree.clade.name = "root"
     tree.clade.branch_length = 0
     print("New Tree to use : ", file_new_tree)
-    tree = Phylo.write(tree,file_new_tree,"newick")
+    tree = Phylo.write(tree, file_new_tree, "newick")
 
 def find_index_name(l_name_prot, name_clade):
     for ind, name in enumerate(l_name_prot):
