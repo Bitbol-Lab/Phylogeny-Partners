@@ -1,5 +1,7 @@
 # Phylogeny-Partners
 
+[![DOI](https://zenodo.org/badge/430666146.svg)](https://zenodo.org/badge/latestdoi/430666146)
+
 ## Two states models
 
 ### Instalation
